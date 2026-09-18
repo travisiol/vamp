@@ -1,0 +1,22 @@
+<!doctype html>
+<!-- Capture helper: stacks same-origin iframes of one page, each scrolled to a different offset.
+     /dev/scroll-harness.html?url=/%3Fintro%3D0&w=1280&h=800&offsets=0,800,1600 -->
+<html><body style="margin:0;background:#050505">
+<script>
+  const q = new URLSearchParams(location.search);
+  const url = q.get("url") || "/?intro=0";
+  const w = Number(q.get("w") || 1280), h = Number(q.get("h") || 800);
+  const offsets = (q.get("offsets") || "0").split(",").map(Number);
+  for (const y of offsets) {
+    const f = document.createElement("iframe");
+    f.width = w; f.height = h; f.style.cssText = `display:block;border:0;border-bottom:2px solid #d3132a;background:#050505`;
+    f.src = url;
+    f.addEventListener("load", () => {
+      const win = f.contentWindow;
+      const go = () => { try { win.document.documentElement.style.scrollBehavior = "auto"; win.scrollTo(0, y); } catch {} };
+      go(); setTimeout(go, 400); setTimeout(go, 1500); setTimeout(go, 3000);
+    });
+    document.body.appendChild(f);
+  }
+</script>
+</body></html>
